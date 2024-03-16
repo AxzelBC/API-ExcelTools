@@ -1,16 +1,16 @@
 using ExcelToolsApi.Infraestructure.Extensions;
-using ExcelToolsApi.Persistence.DBContext;
+using ExcelToolsApi.Persistence.DB;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 
+//############ Services ############
 builder.Services.AddHealthChecks();
 //builder.Services.AddHealthChecksUI().AddInMemoryStorage();
-
 // Add services to the container.
 builder.Services.AddControllers();
-
+// CORS
 var MyAnyOriginCors = "_Any";
 builder.Services.AddCors(options =>
 {
@@ -21,14 +21,10 @@ builder.Services.AddCors(options =>
         }
     );
 });
-
 //database
-builder.Services.AddDbContext<DBContext>();
-
+builder.Services.AddDbContext<ApiDbContext>();
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 //Swagger
 builder.Services.AddSwaggerOpenAPI(builder.Configuration);
 

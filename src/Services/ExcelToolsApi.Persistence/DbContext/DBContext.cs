@@ -1,19 +1,20 @@
 ﻿using ExcelToolsApi.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExcelToolsApi.Persistence.DBContext;
+namespace ExcelToolsApi.Persistence.DB;
 
-public class DBContext : DbContext
+public class ApiDbContext : DbContext
 {
     public DbSet<TaskModel> Task { get; set; }
 
     public string DbPath { get; }
 
-    public DBContext()
+    public ApiDbContext()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = Path.Join(path, "tasks.db");
+        Console.WriteLine(DbPath);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

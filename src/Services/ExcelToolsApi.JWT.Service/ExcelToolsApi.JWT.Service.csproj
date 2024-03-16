@@ -8,6 +8,8 @@
     <Folder Include="Contract\" />
     <Folder Include="Extension\" />
     <Folder Include="Feature\" />
+    <Folder Include="Feature\Commands\" />
+    <Folder Include="Feature\Queries\" />
     <Folder Include="Helper\" />
     <Folder Include="Implementation\" />
     <Folder Include="Mapping\" />

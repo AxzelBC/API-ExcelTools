@@ -1,5 +1,6 @@
-﻿using ExcelToolsApi.Domain.Model;
-using ExcelToolsApi.Persistence.DBContext;
+﻿using ExcelToolsApi.Domain;
+using ExcelToolsApi.Domain.Model;
+using ExcelToolsApi.Persistence.DB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExcelTools.API.Controller;
@@ -8,17 +9,33 @@ namespace ExcelTools.API.Controller;
 [ApiController]
 public class ExampleController : ControllerBase
 {
-    private readonly DBContext _dbContext;
+    private readonly ApiDbContext _apiDbContext;
 
-    public ExampleController(DBContext dBContext)
+    public ExampleController(ApiDbContext dBContext)
     {
-        _dbContext = dBContext;
+        _apiDbContext = dBContext;
     }
 
-    [HttpGet("/")]
+    [HttpGet]
     public List<TaskModel> GetExample()
     {
-        var listTask = _dbContext.Task.ToList();
+        var listTask = _apiDbContext.Task.ToList();
         return listTask;
+    }
+
+    [HttpPost]
+    public TaskModel PostExample([FromBody] TaskDTO dto)
+    {
+        var model = new TaskModel
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            DateCreated = DateOnly.FromDateTime(DateTime.Now)
+        };
+
+        var resutl = _apiDbContext.Task.Add(model);
+        _apiDbContext.SaveChanges();
+
+        return resutl.Entity;
     }
 }
