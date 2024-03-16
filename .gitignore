@@ -1,0 +1,32 @@
+### DotnetCore ###
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# .NET Core build folders
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Common node modules locations
+/node_modules
+/wwwroot/node_modules
+
+# IDE or Text Editor
+.vscode/
+.vs/
