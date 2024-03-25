@@ -15,8 +15,10 @@ COPY ["./src/Services/ExcelToolsApi.Excel.Service/ExcelToolsApi.Excel.Service.cs
 COPY ["./src/Services/ExcelToolsApi.JWT.Service/ExcelToolsApi.JWT.Service.csproj", "ExcelToolsApi.JWT.Service/"]
 COPY ["./src/Services/ExcelToolsApi.Persistence/ExcelToolsApi.Persistence.csproj", "ExcelToolsApi.Persistence/"]
 RUN dotnet restore "ExcelTools.API/ExcelTools.API.csproj"
+
 COPY . .
-WORKDIR "ExcelTools.API"
+WORKDIR "/src/ExcelTools.API"   
+
 RUN dotnet build "ExcelTools.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
