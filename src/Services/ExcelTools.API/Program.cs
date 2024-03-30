@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 
 //############ Services ############
-builder.Services.AddHealthChecks();
+//builder.Services.AddHealthChecks();
 //builder.Services.AddHealthChecksUI().AddInMemoryStorage();
 // Add services to the container.
 builder.Services.AddControllers();
