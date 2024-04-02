@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Milddleware\" />
+    <Folder Include="Middleware\" />
   </ItemGroup>
 
   <ItemGroup>
