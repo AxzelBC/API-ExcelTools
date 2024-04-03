@@ -1,0 +1,21 @@
+services:
+  exceltools.api:
+    image: excel-tools-api
+    container_name: ExcelTools.api
+    build:
+      context: .
+      dockerfile: Services/ExcelTools.API/Dockerfile
+    ports:
+      - "8080:8080"
+
+  exceltools.database:
+    image: postgres:latest
+    container_name: ExcelTools.database
+    environment:
+      - POSTGRES_DB=data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/products-db:/var/lib/postgresql/data
+    ports:
+      - 5440:5440
