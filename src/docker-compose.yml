@@ -5,17 +5,27 @@ services:
     build:
       context: .
       dockerfile: Services/ExcelTools.API/Dockerfile
+    links:
+      - exceltools.database
+    env_file:
+      - ./.env/api_dev.env
     ports:
-      - "8080:8080"
+      - "5033:8080"
+    depends_on:
+      - exceltools.database
 
   exceltools.database:
     image: postgres:latest
     container_name: ExcelTools.database
-    environment:
-      - POSTGRES_DB=data
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./.env/db_dev.env
     volumes:
       - ./.containers/products-db:/var/lib/postgresql/data
     ports:
-      - 5440:5440
+      - 5440:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      interval: 1m30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
