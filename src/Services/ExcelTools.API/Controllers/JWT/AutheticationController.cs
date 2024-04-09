@@ -1,54 +1,45 @@
-﻿using ExcelToolsApi.JWT.Service.Contract;
-using ExcelToolsApi.JWT.Service.Implementation;
+﻿using ExcelToolsApi.Domain.Request; // Importar el espacio de nombres correcto
+using ExcelToolsApi.Domain.Response;
 using Microsoft.AspNetCore.Mvc;
+using ExcelToolsApi.JWT.Service.Contract;
+using ExcelToolsApi.JWT.Service;
 
-namespace ExcelTools.API.Controller;
-
-[Route("api/auth")]
-[ApiController]
-public class AutheticationController : ControllerBase
+namespace ExcelTools.API.Controller
 {
-    private readonly IAuthenticationService _authenticationService;
-
-    public AutheticationController(IAuthenticationService auth)
+    [Route("api/auth")]
+    [ApiController]
+    public class AutheticationController : ControllerBase
     {
-        _authenticationService = auth;
-    }
+        private readonly IAuthenticationService _authenticationService;
 
-    [HttpPost("register")]
-    public IActionResult Register(RegisterResquest request)
-    {
-        var authResult = _authenticationService.Register(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Password
-            );
-        var response = new AuthenticationResponse(
-            authResult.Id,
-            authResult.FirstName,
-            authResult.LastName,
-            authResult.Email,
-            authResult.Token
-        );
-        return Ok(response);
-    }
+        public AutheticationController(IAuthenticationService auth)
+        {
+            _authenticationService = auth;
+        }
 
-    [HttpPost("login")]
-    public IActionResult Login(LoginResquest request)
-    {
-        var authResult = _authenticationService.Login(
-            request.Email,
-            request.Password
-            );
-        var response = new AuthenticationResponse(
-            authResult.Id,
-            authResult.FirstName,
-            authResult.LastName,
-            authResult.Email,
-            authResult.Token
-        );
-        return Ok(response);
-    }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterResquest request) // Hacer el método asincrónico
+        {
+            var adapter = new AuthenticationRegisterAdapter
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Password = request.Password
+            };
 
+            var authResult = await _authenticationService.Register(adapter);
+
+            var response = new AuthenticationResponse
+            {
+                Id = authResult.Id,
+                FirstName = authResult.FirstName,
+                LastName = authResult.LastName,
+                Email = authResult.Email,
+                Token = authResult.Token
+            };
+
+            return Ok(response);
+        }
+    }
 }
