@@ -3,6 +3,7 @@ using ExcelToolsApi.Domain.Response;
 using Microsoft.AspNetCore.Mvc;
 using ExcelToolsApi.JWT.Service.Contract;
 using ExcelToolsApi.JWT.Service;
+using ExcelToolsApi.Domain.DTO;
 
 namespace ExcelTools.API.Controller
 {
@@ -29,6 +30,28 @@ namespace ExcelTools.API.Controller
             };
 
             var authResult = await _authenticationService.Register(adapter);
+
+            var response = new AuthenticationResponse
+            {
+                Id = authResult.Id,
+                FirstName = authResult.FirstName,
+                LastName = authResult.LastName,
+                Email = authResult.Email,
+                Token = authResult.Token
+            };
+
+            return Ok(response);
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginRequestDTO request) // Hacer el método asincrónico
+        {
+            var adapter = new LoginRequestDTO
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+
+            var authResult = await _authenticationService.Login(adapter);
 
             var response = new AuthenticationResponse
             {

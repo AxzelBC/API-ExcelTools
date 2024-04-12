@@ -8,5 +8,5 @@ namespace ExcelToolsApi.JWT.Service.Contract;
 public interface IAuthenticationService
 {
     Task<AuthenticationResponse> Register(AuthenticationRegisterAdapter request);
-    //AuthenticationResponse Login(LoginRequestDTO loginRequestDTO);
+    Task<AuthenticationResponse> Login(LoginRequestDTO loginRequestDTO);
 }

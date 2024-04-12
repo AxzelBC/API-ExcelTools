@@ -16,6 +16,8 @@ public static class DependecyInjection
         // Registra CreateUserCommandHandler como manejador de la solicitud AuthenticationRegisterAdapter
         //services.AddScoped<IRequestHandler<AuthenticationRegisterAdapter, AuthenticationResponse>, CreateUserCommandHandler>();
 
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
         return services;
     }
 }

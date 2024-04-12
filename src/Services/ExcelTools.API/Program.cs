@@ -1,6 +1,7 @@
 using ExcelToolsApi.Infraestructure.Extensions;
 using ExcelToolsApi.Persistence.DB;
 using ExcelToolsApi.JWT.Service;
+using ExcelToolsApi.Infraestructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,9 @@ builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 builder.Services.AddControllers();
 
 // Services dependecy inyection
-builder.Services.AddJWTService();
+builder.Services
+.AddJWTService()
+.AddInfrastructure(builder.Configuration);
 
 // CORS
 var MyAnyOriginCors = "_Any";
