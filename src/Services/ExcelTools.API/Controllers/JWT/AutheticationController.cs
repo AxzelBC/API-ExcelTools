@@ -1,4 +1,4 @@
-﻿using ExcelToolsApi.Domain.Request; // Importar el espacio de nombres correcto
+﻿using ExcelToolsApi.Domain.Request;
 using ExcelToolsApi.Domain.Response;
 using Microsoft.AspNetCore.Mvc;
 using ExcelToolsApi.JWT.Service.Contract;
@@ -19,7 +19,7 @@ namespace ExcelTools.API.Controller
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterResquest request) // Hacer el método asincrónico
+        public async Task<IActionResult> Register(RegisterResquest request)
         {
             var adapter = new AuthenticationRegisterAdapter
             {
@@ -43,7 +43,7 @@ namespace ExcelTools.API.Controller
             return Ok(response);
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequestDTO request) // Hacer el método asincrónico
+        public async Task<IActionResult> Login(LoginRequestDTO request)
         {
             var adapter = new LoginRequestDTO
             {
