@@ -3,20 +3,23 @@ using ExcelToolsApi.Domain.Request;
 using ExcelToolsApi.Domain.Response;
 using ExcelToolsApi.JWT.Service.Contract;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExcelToolsApi.JWT.Service.Implementation
 {
     public class AuthenticationService : IRequestHandler<AuthenticationRegisterAdapter, AuthenticationResponse>, IAuthenticationService
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator)
+        public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator, UserManager<IdentityUser> userManager)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
+            _userManager = userManager;
         }
 
         // Método Handle para manejar la solicitud de registro
-        public Task<AuthenticationResponse> Handle(AuthenticationRegisterAdapter request, CancellationToken cancellationToken)
+        public async Task<AuthenticationResponse> Handle(AuthenticationRegisterAdapter request, CancellationToken cancellationToken)
         {
             // Verificar si el usuario existe
             // Caso de que exitsa retornar un error
@@ -34,6 +37,9 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             // Generar el token utilizando el generador de tokens
             var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
 
+            var user = new IdentityUser { UserName = request.Email, Email = request.Email };
+            var result = await _userManager.CreateAsync(user, request.Password);
+
             // Crear un objeto AuthenticationResponse con la información de respuesta
             var response = new AuthenticationResponse
             {
@@ -43,9 +49,18 @@ namespace ExcelToolsApi.JWT.Service.Implementation
                 Email = request.Email,
                 Token = token
             };
+            if (result.Succeeded)
+            {
+                // Devuelve el objeto AuthenticationResponse como tarea completada
+                return response;
 
-            // Devuelve el objeto AuthenticationResponse como tarea completada
-            return Task.FromResult(response);
+            }
+            else
+            {
+                // acomodar esto retornar un error
+                return response;
+
+            }
         }
 
         // Implementación del método Register

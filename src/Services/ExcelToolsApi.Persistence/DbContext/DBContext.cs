@@ -1,9 +1,10 @@
 ﻿using ExcelToolsApi.Domain.Model;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExcelToolsApi.Persistence.DB;
 
-public class ApiDbContext : DbContext
+public class ApiDbContext : IdentityDbContext
 {
     public DbSet<TaskModel> Task { get; set; }
 
