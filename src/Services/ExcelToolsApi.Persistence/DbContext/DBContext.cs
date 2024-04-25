@@ -18,7 +18,7 @@ public class ApiDbContext : IdentityDbContext
 
     public ApiDbContext()
     {
-        // Connection = Environment.GetEnvironmentVariable("CONNECTION_DB") ?? "";
+        //Connection = Environment.GetEnvironmentVariable("CONNECTION_DB") ?? "";
         Connection = "Host=localhost;Port=5440;Username=postgres;Password=postgres;Database=tareasdb";
         //var folder = Environment.SpecialFolder.LocalApplicationData;
         //var path = Environment.GetFolderPath(folder);

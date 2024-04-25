@@ -64,5 +64,27 @@ namespace ExcelTools.API.Controller
 
             return Ok(response);
         }
+        [HttpPost("renovateToken")]
+        public async Task<IActionResult> RenovateToken(TokenRequestDTO request)
+        {
+            var adapter = new TokenRequestDTO
+            {
+                UserId = request.UserId
+            };
+
+
+            var authResult = await _authenticationService.RenovateToken(adapter);
+
+            var response = new AuthenticationResponse
+            {
+                Id = authResult.Id,
+                FirstName = authResult.FirstName,
+                LastName = authResult.LastName,
+                Email = authResult.Email,
+                Token = authResult.Token
+            };
+
+            return Ok(response);
+        }
     }
 }
