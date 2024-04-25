@@ -12,7 +12,8 @@ namespace ExcelToolsApi.JWT.Service.Implementation
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator, UserManager<IdentityUser> userManager)
+        public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator, UserManager<IdentityUser> userManager
+        )
         {
             _jwtTokenGenerator = jwtTokenGenerator;
             _userManager = userManager;
@@ -55,12 +56,7 @@ namespace ExcelToolsApi.JWT.Service.Implementation
                 return response;
 
             }
-            else
-            {
-                // acomodar esto retornar un error
-                return response;
-
-            }
+            return response;
         }
 
         // Implementación del método Register

@@ -3,7 +3,6 @@ using ExcelToolsApi.Persistence.DB;
 using ExcelToolsApi.JWT.Service;
 using ExcelToolsApi.Infraestructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using ExcelToolsApi.Persistence;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -53,7 +52,7 @@ builder.Services.AddCors(options =>
     );
 });
 //database
-// builder.Services.AddDbContext<ApiDbContext>();
+builder.Services.AddDbContext<ApiDbContext>();
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 //Swagger
