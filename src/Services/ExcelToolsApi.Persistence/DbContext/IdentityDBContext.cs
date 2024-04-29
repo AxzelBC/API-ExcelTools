@@ -1,18 +1,18 @@
 ﻿using ExcelToolsApi.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExcelToolsApi.Persistence.DB;
+namespace ExcelToolsApi.Persistence.Identity;
 
-public class ApiDbContext : DbContext
+public class ApiIdentityDbContext : DbContext
 {
     public DbSet<TaskModel> Task { get; set; }
 
     //public string DbPath { get; }
     private readonly string Connection;
 
-    public ApiDbContext()
+    public ApiIdentityDbContext()
     {
-        Connection = Environment.GetEnvironmentVariable("CONNECTION_DB") ?? "";
+        Connection = Environment.GetEnvironmentVariable("IDENTITY_CONNECTION_DB") ?? "";
         //var folder = Environment.SpecialFolder.LocalApplicationData;
         //var path = Environment.GetFolderPath(folder);
         //DbPath = Path.Join(path, "tasks.db");

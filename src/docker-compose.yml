@@ -1,3 +1,5 @@
+version: '3.1'
+
 services:
   exceltools.api:
     image: excel-tools-api
@@ -6,17 +8,18 @@ services:
       context: .
       dockerfile: Services/ExcelTools.API/Dockerfile
     links:
-      - exceltools.database
+      - exceltools.database.identity
     env_file:
       - ./.env/api_dev.env
     ports:
       - "5033:8080"
     depends_on:
-      - exceltools.database
+      - exceltools.database.identity
+      - exceltools.database.excel
 
-  exceltools.database:
+  exceltools.database.identity:
     image: postgres:latest
-    container_name: ExcelTools.database
+    container_name: ExcelTools.database.identity
     env_file:
       - ./.env/db_dev.env
     volumes:
@@ -29,3 +32,23 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+
+  exceltools.database.excel:
+    image: mongodb/mongodb-community-server:latest
+    restart: unless-stopped
+    container_name: ExcelTools.database.excel
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=admin
+      - MONGODB_INITDB_ROOT_PASSWORD=admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodbdata:/data/db
+
+volumes:
+  mongodbdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./.volume/exceldb
+      o: bind

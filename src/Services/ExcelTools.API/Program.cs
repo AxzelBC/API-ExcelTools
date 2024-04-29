@@ -1,5 +1,6 @@
 using ExcelToolsApi.Infraestructure.Extensions;
-using ExcelToolsApi.Persistence.DB;
+using ExcelToolsApi.Persistence.Identity;
+using ExcelToolsApi.PersistenceExcel.Excel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,8 @@ builder.Services.AddCors(options =>
     );
 });
 //database
-builder.Services.AddDbContext<ApiDbContext>();
+builder.Services.AddDbContext<ApiIdentityDbContext>();
+builder.Services.AddSingleton<ApiExcelDbContext>();
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 //Swagger
