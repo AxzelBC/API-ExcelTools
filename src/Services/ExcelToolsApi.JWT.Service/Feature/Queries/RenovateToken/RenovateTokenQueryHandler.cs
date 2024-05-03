@@ -1,7 +1,6 @@
-﻿using ExcelToolsApi.Domain.Request;
-using ExcelToolsApi.Domain.Response;
+﻿using ExcelToolsApi.Domain.Response;
+using ExcelToolsApi.JWT.Service.Contract;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace ExcelToolsApi.JWT.Service.Commands.RenovateToken;
 
@@ -11,48 +10,19 @@ public class RenovateTokenQueryHandler : IRequestHandler<AuthenticationTokenRequ
 {
 
     #region private fields
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
-    private readonly UserManager<IdentityUser> _userManager;
-
+    private readonly IAuthenticationService _authenticationService;
     #endregion private fields
-    public RenovateTokenQueryHandler(UserManager<IdentityUser> userManager
-, IJwtTokenGenerator jwtTokenGenerator)
+    public RenovateTokenQueryHandler(
+        IAuthenticationService authenticationService
+    )
     {
-        _jwtTokenGenerator = jwtTokenGenerator;
-        _userManager = userManager;
+        _authenticationService = authenticationService;
     }
 
 
     public async Task<AuthenticationResponse> Handle(AuthenticationTokenRequestAdapter request, CancellationToken cancellationToken)
     {
-        var userIdString = request.UserId.ToString();
-        var user = await _userManager.FindByIdAsync(userIdString);
-
-        if (user is null)
-        {
-            throw new ArgumentException("User not found");
-        }
-        var userId = new Guid(user.Id);
-
-        TokenRequest tokenRequest = new TokenRequest
-        {
-            UserId = userId,
-            FirstName = user.UserName,
-            LastName = user.UserName
-        };
-        var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
-
-        var response = new AuthenticationResponse
-        {
-            Id = userId, // Asigna el mismo userId generado previamente
-            FirstName = user.UserName,
-            LastName = user.UserName,
-            Email = user.Email,
-            Token = token
-        };
-
-        // Devuelve el objeto AuthenticationResponse como tarea completada
+        var response = await _authenticationService.RenovateToken(request);
         return response;
-
     }
 }
