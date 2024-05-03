@@ -1,6 +1,7 @@
 ﻿using ExcelToolsApi.Domain;
 using ExcelToolsApi.Domain.Model;
-using ExcelToolsApi.Persistence.DB;
+using ExcelToolsApi.Persistence.Identity;
+using ExcelToolsApi.PersistenceExcel.Excel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExcelTools.API.Controller;
@@ -9,17 +10,22 @@ namespace ExcelTools.API.Controller;
 [ApiController]
 public class ExampleController : ControllerBase
 {
-    private readonly ApiDbContext _apiDbContext;
+    private readonly ApiIdentityDbContext _apiIdentityDbContext;
+    private readonly ApiExcelDbContext _apiExcelDbContex;
 
-    public ExampleController(ApiDbContext dBContext)
+    public ExampleController(
+        ApiIdentityDbContext identityDbContext,
+        ApiExcelDbContext excelDbContext
+    )
     {
-        _apiDbContext = dBContext;
+        _apiIdentityDbContext = identityDbContext;
+        _apiExcelDbContex = excelDbContext;
     }
 
     [HttpGet]
     public List<TaskModel> GetExample()
     {
-        var listTask = _apiDbContext.Task.ToList();
+        var listTask = _apiIdentityDbContext.Task.ToList();
         return listTask;
     }
 
@@ -33,9 +39,26 @@ public class ExampleController : ControllerBase
             DateCreated = DateOnly.FromDateTime(DateTime.Now)
         };
 
-        var resutl = _apiDbContext.Task.Add(model);
-        _apiDbContext.SaveChanges();
+        var resutl = _apiIdentityDbContext.Task.Add(model);
+        _apiIdentityDbContext.SaveChanges();
 
         return resutl.Entity;
+    }
+
+    [HttpPost("excel")]
+    public async Task PostExampleExcel([FromBody] string name)
+    {
+        var movie = new MovieModel()
+        {
+            TitleMovie = name
+        };
+        await _apiExcelDbContex.CreateAsync(movie);
+    }
+
+    [HttpGet("excel")]
+    public async Task<List<MovieModel>> GetExampleExcel()
+    {
+        var listMovies = await _apiExcelDbContex.GetMoviesAsync();
+        return listMovies;
     }
 }

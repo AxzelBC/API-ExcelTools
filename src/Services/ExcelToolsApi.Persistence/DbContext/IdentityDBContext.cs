@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExcelToolsApi.Persistence.DB;
+namespace ExcelToolsApi.Persistence.Identity;
 
-public class ApiDbContext : IdentityDbContext
+public class ApiIdentityDbContext : IdentityDbContext
+
 {
     public DbSet<TaskModel> Task { get; set; }
 
@@ -16,10 +17,9 @@ public class ApiDbContext : IdentityDbContext
 
     }
 
-    public ApiDbContext()
+    public ApiIdentityDbContext()
     {
-        //Connection = Environment.GetEnvironmentVariable("CONNECTION_DB") ?? "";
-        Connection = "Host=localhost;Port=5440;Username=postgres;Password=postgres;Database=tareasdb";
+        Connection = Environment.GetEnvironmentVariable("IDENTITY_CONNECTION_DB") ?? "";
         //var folder = Environment.SpecialFolder.LocalApplicationData;
         //var path = Environment.GetFolderPath(folder);
         //DbPath = Path.Join(path, "tasks.db");

@@ -1,2 +1,0 @@
-### Siempre se debe correr desde la carpeta src/
-docker buildx build -t excel-tools-api -f Services\ExcelTools.API\Dockerfile .

@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToolsApi.Excel.Service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelTools.API", "Services\ExcelTools.API\ExcelTools.API.csproj", "{D42BA2A6-9BF6-467E-AA8A-4F134098A716}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToolsApi.PersistenceExcel", "Services\ExcelToolsApi.PersistenceExcel\ExcelToolsApi.PersistenceExcel.csproj", "{D16524E3-C8DB-4B01-9623-327864C5EE0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D42BA2A6-9BF6-467E-AA8A-4F134098A716}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D42BA2A6-9BF6-467E-AA8A-4F134098A716}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D42BA2A6-9BF6-467E-AA8A-4F134098A716}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16524E3-C8DB-4B01-9623-327864C5EE0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16524E3-C8DB-4B01-9623-327864C5EE0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16524E3-C8DB-4B01-9623-327864C5EE0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16524E3-C8DB-4B01-9623-327864C5EE0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

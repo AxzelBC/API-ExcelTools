@@ -1,5 +1,4 @@
 using ExcelToolsApi.Infraestructure.Extensions;
-using ExcelToolsApi.Persistence.DB;
 using ExcelToolsApi.JWT.Service;
 using ExcelToolsApi.Infraestructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +6,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ExcelToolsApi.Persistence.Identity;
+using ExcelToolsApi.PersistenceExcel.Excel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services
 
 // auth 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-       .AddEntityFrameworkStores<ApiDbContext>()
+       .AddEntityFrameworkStores<ApiIdentityDbContext>()
        .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
@@ -52,7 +53,8 @@ builder.Services.AddCors(options =>
     );
 });
 //database
-builder.Services.AddDbContext<ApiDbContext>();
+builder.Services.AddDbContext<ApiIdentityDbContext>();
+builder.Services.AddSingleton<ApiExcelDbContext>();
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 //Swagger

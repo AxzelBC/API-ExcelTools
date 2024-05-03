@@ -26,6 +26,7 @@
     <ProjectReference Include="..\ExcelToolsApi.Domain\ExcelToolsApi.Domain.csproj" />
     <ProjectReference Include="..\ExcelToolsApi.Infraestructure\ExcelToolsApi.Infraestructure.csproj" />
     <ProjectReference Include="..\ExcelToolsApi.Persistence\ExcelToolsApi.Persistence.csproj" />
+    <ProjectReference Include="..\ExcelToolsApi.PersistenceExcel\ExcelToolsApi.PersistenceExcel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
