@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ExcelToolsApi.JWT.Service.Contract;
 using ExcelToolsApi.JWT.Service;
 using ExcelToolsApi.Domain.DTO;
+using MediatR;
 
 namespace ExcelTools.API.Controller
 {
@@ -12,10 +13,15 @@ namespace ExcelTools.API.Controller
     public class AutheticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly IMediator _mediatR;
 
-        public AutheticationController(IAuthenticationService auth)
+        public AutheticationController(
+            IAuthenticationService auth,
+            IMediator mediatR
+        )
         {
             _authenticationService = auth;
+            _mediatR = mediatR;
         }
 
         [HttpPost("register")]
@@ -45,46 +51,22 @@ namespace ExcelTools.API.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDTO request)
         {
+            // adapter de authenticatioLoding Adapter a loginrequestDTO
             var adapter = new LoginRequestDTO
             {
                 Email = request.Email,
                 Password = request.Password
             };
-
-            var authResult = await _authenticationService.Login(adapter);
-
-            var response = new AuthenticationResponse
-            {
-                Id = authResult.Id,
-                FirstName = authResult.FirstName,
-                LastName = authResult.LastName,
-                Email = authResult.Email,
-                Token = authResult.Token
-            };
+            var response = _mediatR.Send(adapter);
 
             return Ok(response);
         }
         [HttpPost("renovateToken")]
         public async Task<IActionResult> RenovateToken(TokenRequestDTO request)
         {
-            var adapter = new TokenRequestDTO
-            {
-                UserId = request.UserId
-            };
 
 
-            var authResult = await _authenticationService.RenovateToken(adapter);
-
-            var response = new AuthenticationResponse
-            {
-                Id = authResult.Id,
-                FirstName = authResult.FirstName,
-                LastName = authResult.LastName,
-                Email = authResult.Email,
-                Token = authResult.Token
-            };
-
-            return Ok(response);
+            return Ok();
         }
     }
 }
