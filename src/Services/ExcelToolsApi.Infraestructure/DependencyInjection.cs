@@ -11,6 +11,9 @@ public static class DependencyInjection
     {
         services.Configure<JwtSettingDTO>(configuration.GetSection(JwtSettingDTO.SectionName));
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IJwtDecodeToken, JwtDecodeToken>();
+
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         return services;
     }
 }
