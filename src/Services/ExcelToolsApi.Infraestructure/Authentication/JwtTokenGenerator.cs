@@ -30,7 +30,6 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         {
             new Claim(JwtRegisteredClaimNames.Sub, tokenRequest.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.GivenName, tokenRequest.FirstName),
-            new Claim(JwtRegisteredClaimNames.FamilyName, tokenRequest.LastName),
             new Claim(JwtRegisteredClaimNames.UniqueName, Guid.NewGuid().ToString())
        };
 
