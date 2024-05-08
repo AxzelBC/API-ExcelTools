@@ -1,10 +1,9 @@
 ﻿using ExcelToolsApi.Domain.Request;
-using ExcelToolsApi.Domain.Response;
 using Microsoft.AspNetCore.Mvc;
-using ExcelToolsApi.JWT.Service.Contract;
 using ExcelToolsApi.JWT.Service;
 using ExcelToolsApi.Domain.DTO;
 using MediatR;
+using AutoMapper;
 
 namespace ExcelTools.API.Controller
 {
@@ -12,22 +11,26 @@ namespace ExcelTools.API.Controller
     [ApiController]
     public class AutheticationController : ControllerBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        #region private fields
+
         private readonly IMediator _mediatR;
+        private readonly IMapper _mapper;
+        #endregion private fields
+
 
         public AutheticationController(
-            IAuthenticationService auth,
-            IMediator mediatR
+            IMediator mediatR,
+            IMapper mapper
         )
         {
-            _authenticationService = auth;
             _mediatR = mediatR;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterResquest request)
         {
-            var adapter = new AuthenticationRegisterAdapter
+            var registerDTO = new RegisterRequestDTO
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
@@ -35,16 +38,9 @@ namespace ExcelTools.API.Controller
                 Password = request.Password
             };
 
-            var authResult = await _authenticationService.Register(adapter);
+            var adapter = _mapper.Map<AuthenticationRegisterAdapter>(registerDTO);
 
-            var response = new AuthenticationResponse
-            {
-                Id = authResult.Id,
-                FirstName = authResult.FirstName,
-                LastName = authResult.LastName,
-                Email = authResult.Email,
-                Token = authResult.Token
-            };
+            var response = await _mediatR.Send(adapter);
 
             return Ok(response);
         }
@@ -52,21 +48,31 @@ namespace ExcelTools.API.Controller
         public async Task<IActionResult> Login(LoginRequestDTO request)
         {
             // adapter de authenticatioLoding Adapter a loginrequestDTO
-            var adapter = new LoginRequestDTO
+            var loginDTO = new LoginRequestDTO
             {
                 Email = request.Email,
                 Password = request.Password
             };
-            var response = _mediatR.Send(adapter);
+
+            var adapter = _mapper.Map<AuthenticationLoginAdapter>(loginDTO);
+
+            var response = await _mediatR.Send(adapter);
 
             return Ok(response);
         }
         [HttpPost("renovateToken")]
         public async Task<IActionResult> RenovateToken(TokenRequestDTO request)
         {
+            var tokenDTO = new TokenRequestDTO
+            {
+                Token = request.Token
+            };
 
+            var adapter = _mapper.Map<AuthenticationTokenRequestAdapter>(tokenDTO);
 
-            return Ok();
+            var response = await _mediatR.Send(adapter);
+
+            return Ok(response);
         }
     }
 }
