@@ -10,53 +10,63 @@ namespace ExcelToolsApi.JWT.Service.Implementation
         #region private fields
 
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IJwtDecodeToken _jwtDecodeToken;
         private readonly UserManager<IdentityUser> _userManager;
         #endregion private fields
 
         public AuthenticationService(
             UserManager<IdentityUser> userManager,
-            IJwtTokenGenerator jwtTokenGenerator
+            IJwtTokenGenerator jwtTokenGenerator,
+            IJwtDecodeToken jwtDecodeToken
         )
         {
             _jwtTokenGenerator = jwtTokenGenerator;
+            _jwtDecodeToken = jwtDecodeToken;
             _userManager = userManager;
         }
 
         public async Task<AuthenticationResponse> Login(AuthenticationLoginAdapter loginRequestDTO)
         {
-            // register
             var user = await _userManager.FindByEmailAsync(loginRequestDTO.Email);
 
             if (user is null)
             {
-                throw new ArgumentException("The user does not exist");
+                throw new ArgumentException("Email or Password doest not exist");
             }
-            var isCorrectThePasswors = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
-            if (!isCorrectThePasswors)
+            var isCorrectThePassword = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+
+            if (!isCorrectThePassword)
             {
-                throw new ArgumentException($"Unable to authenticate user {loginRequestDTO.Email}");
+                throw new ArgumentException("Email or password doest not exist");
             }
+
+            var Identityuser = new IdentityUser { UserName = user.UserName, Email = user.Email };
+
+            var loginInfo = new UserLoginInfo("ExcelToolsAPI", user.Id, user.UserName);
+
+            var saveLogin = await _userManager.AddLoginAsync(Identityuser, loginInfo);
+
+            // if (!saveLogin.Succeeded)
+            // {
+            //     throw new ArgumentException("Somethin was wrong saving the login");
+            // }
 
             var userId = new Guid(user.Id);
 
-            // Crear un objeto TokenRequest con la información del usuario
             TokenRequest tokenRequest = new TokenRequest
             {
                 UserId = userId,
                 FirstName = user.UserName,
-                LastName = ""
             };
-            // Generar el token utilizando el generador de tokens
+
             var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
 
-            // Crear un objeto AuthenticationResponse con la información de respuesta
             var response = new AuthenticationResponse
             {
-                Id = userId, // Asigna el mismo userId generado previamente
-                FirstName = "",
-                LastName = "",
-                Email = "",
+                Id = userId,
+                FirstName = user.UserName,
+                Email = user.Email,
                 Token = token
             };
 
@@ -65,59 +75,57 @@ namespace ExcelToolsApi.JWT.Service.Implementation
 
         public async Task<AuthenticationResponse> Register(AuthenticationRegisterAdapter request)
         {
-            Guid userId = Guid.NewGuid();
-
-            // Crear un objeto TokenRequest con la información del usuario
-            TokenRequest tokenRequest = new TokenRequest
-            {
-                UserId = userId,
-                FirstName = request.FirstName,
-                LastName = request.LastName
-            };
-
-            // Generar el token utilizando el generador de tokens
-            var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
 
             var user = new IdentityUser { UserName = request.Email, Email = request.Email };
             var result = await _userManager.CreateAsync(user, request.Password);
 
-            // Crear un objeto AuthenticationResponse con la información de respuesta
+
+            var userId = new Guid(user.Id);
+            TokenRequest tokenRequest = new TokenRequest
+            {
+                UserId = userId,
+                FirstName = request.FirstName,
+            };
+
+            var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
+
+
             var response = new AuthenticationResponse
             {
-                Id = userId, // Asigna el mismo userId generado previamente
+                Id = userId,
                 FirstName = request.FirstName,
-                LastName = request.LastName,
                 Email = request.Email,
                 Token = token
             };
+
             if (result.Succeeded)
             {
-                // Devuelve el objeto AuthenticationResponse como tarea completada
                 return response;
-
             }
-            return response;
-
-
+            else
+            {
+                throw new ArgumentException("Something was wrong register the user");
+            }
         }
 
         public async Task<AuthenticationResponse> RenovateToken(AuthenticationTokenRequestAdapter request)
         {
-            // deberia recibir un token
-            var userIdString = request.UserId.ToString();
-            var user = await _userManager.FindByIdAsync(userIdString);
+
+            var data = _jwtDecodeToken.DecodeToken(request.Token);
+
+            var user = await _userManager.FindByIdAsync(data.Id.ToString());
 
             if (user is null)
             {
-                throw new ArgumentException("User not found");
+                throw new ArgumentException("Invalid Token");
             }
+
             var userId = new Guid(user.Id);
 
             TokenRequest tokenRequest = new TokenRequest
             {
                 UserId = userId,
                 FirstName = user.UserName,
-                LastName = user.UserName
             };
 
             // creo que deberi de registrar un login en la base de datos
@@ -127,12 +135,10 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             {
                 Id = userId, // Asigna el mismo userId generado previamente
                 FirstName = user.UserName,
-                LastName = user.UserName,
                 Email = user.Email,
                 Token = token
             };
 
-            // Devuelve el objeto AuthenticationResponse como tarea completada
             return response;
         }
     }
