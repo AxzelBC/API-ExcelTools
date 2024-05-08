@@ -12,8 +12,11 @@ public static class DependecyInjection
     {
         // Registra AuthenticationService como implementación de IAuthenticationService
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetEntryAssembly()));
-        // Registra CreateUserCommandHandler como manejador de la solicitud AuthenticationRegisterAdapter
+        //services.AddMediatR(cf => cf.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
+        var assemblies = Assembly.Load("ExcelToolsApi.JWT.Service");
+
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assemblies));        // Registra CreateUserCommandHandler como manejador de la solicitud AuthenticationRegisterAdapter
         //services.AddScoped<IRequestHandler<AuthenticationRegisterAdapter, AuthenticationResponse>, CreateUserCommandHandler>();
 
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
