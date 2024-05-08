@@ -2,6 +2,6 @@
 
 public class TokenRequestDTO
 {
-    public Guid UserId { get; set; }
+    public required string Token { get; set; }
 
 }
