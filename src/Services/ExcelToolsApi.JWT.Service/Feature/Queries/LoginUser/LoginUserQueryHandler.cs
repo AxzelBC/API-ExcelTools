@@ -1,8 +1,6 @@
-﻿using ExcelToolsApi.Domain.Request;
-using ExcelToolsApi.Domain.Response;
+﻿using ExcelToolsApi.Domain.Response;
 using ExcelToolsApi.JWT.Service.Contract;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace ExcelToolsApi.JWT.Service.Commands.GetUser;
 
