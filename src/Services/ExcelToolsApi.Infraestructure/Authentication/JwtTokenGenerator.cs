@@ -19,7 +19,6 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtSettingDTO = jwtOptions.Value;
     }
 
-
     public string GenerateToken(TokenRequest tokenRequest)
     {
         var siginingCredentials = new SigningCredentials(
@@ -29,9 +28,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, tokenRequest.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.GivenName, tokenRequest.FirstName),
-            new Claim(JwtRegisteredClaimNames.UniqueName, Guid.NewGuid().ToString())
-       };
+            new Claim("user_id", tokenRequest.UserId.ToString()),
+        };
 
         var securityToken = new JwtSecurityToken(
             issuer: _jwtSettingDTO.Issuer,
