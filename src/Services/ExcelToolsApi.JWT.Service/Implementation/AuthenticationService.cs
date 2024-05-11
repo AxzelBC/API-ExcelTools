@@ -10,18 +10,15 @@ namespace ExcelToolsApi.JWT.Service.Implementation
         #region private fields
 
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IJwtDecodeToken _jwtDecodeToken;
         private readonly UserManager<IdentityUser> _userManager;
         #endregion private fields
 
         public AuthenticationService(
             UserManager<IdentityUser> userManager,
-            IJwtTokenGenerator jwtTokenGenerator,
-            IJwtDecodeToken jwtDecodeToken
+            IJwtTokenGenerator jwtTokenGenerator
         )
         {
             _jwtTokenGenerator = jwtTokenGenerator;
-            _jwtDecodeToken = jwtDecodeToken;
             _userManager = userManager;
         }
 
@@ -45,6 +42,7 @@ namespace ExcelToolsApi.JWT.Service.Implementation
 
             var loginInfo = new UserLoginInfo("ExcelToolsAPI", user.Id, user.UserName);
 
+            // I want to save the login in the database
             var saveLogin = await _userManager.AddLoginAsync(Identityuser, loginInfo);
 
             // if (!saveLogin.Succeeded)
@@ -57,7 +55,6 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             TokenRequest tokenRequest = new TokenRequest
             {
                 UserId = userId,
-                FirstName = user.UserName,
             };
 
             var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
@@ -65,8 +62,6 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             var response = new AuthenticationResponse
             {
                 Id = userId,
-                FirstName = user.UserName,
-                Email = user.Email,
                 Token = token
             };
 
@@ -84,7 +79,6 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             TokenRequest tokenRequest = new TokenRequest
             {
                 UserId = userId,
-                FirstName = request.FirstName,
             };
 
             var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
@@ -93,8 +87,6 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             var response = new AuthenticationResponse
             {
                 Id = userId,
-                FirstName = request.FirstName,
-                Email = request.Email,
                 Token = token
             };
 
@@ -110,10 +102,7 @@ namespace ExcelToolsApi.JWT.Service.Implementation
 
         public async Task<AuthenticationResponse> RenovateToken(AuthenticationTokenRequestAdapter request)
         {
-
-            var data = _jwtDecodeToken.DecodeToken(request.Token);
-
-            var user = await _userManager.FindByIdAsync(data.Id.ToString());
+            var user = await _userManager.FindByIdAsync(request.Id);
 
             if (user is null)
             {
@@ -125,17 +114,13 @@ namespace ExcelToolsApi.JWT.Service.Implementation
             TokenRequest tokenRequest = new TokenRequest
             {
                 UserId = userId,
-                FirstName = user.UserName,
             };
 
-            // creo que deberi de registrar un login en la base de datos
             var token = _jwtTokenGenerator.GenerateToken(tokenRequest);
 
             var response = new AuthenticationResponse
             {
-                Id = userId, // Asigna el mismo userId generado previamente
-                FirstName = user.UserName,
-                Email = user.Email,
+                Id = userId,
                 Token = token
             };
 
