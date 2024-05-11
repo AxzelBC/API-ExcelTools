@@ -4,6 +4,8 @@ using ExcelToolsApi.JWT.Service;
 using ExcelToolsApi.Domain.DTO;
 using MediatR;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ExcelTools.API.Controller
 {
@@ -33,7 +35,6 @@ namespace ExcelTools.API.Controller
             var registerDTO = new RegisterRequestDTO
             {
                 FirstName = request.FirstName,
-                LastName = request.LastName,
                 Email = request.Email,
                 Password = request.Password
             };
@@ -60,12 +61,21 @@ namespace ExcelTools.API.Controller
 
             return Ok(response);
         }
-        [HttpPost("renovateToken")]
-        public async Task<IActionResult> RenovateToken(TokenRequestDTO request)
+
+        [HttpGet("renovateToken")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> RenovateToken()
         {
+            var idClaim = HttpContext.User.Claims.Where(claim => claim.Type == "user_id").FirstOrDefault();
+            if (idClaim == null)
+            {
+                throw new Exception("invalid token");
+            }
+            var id = idClaim.Value;
+
             var tokenDTO = new TokenRequestDTO
             {
-                Token = request.Token
+                Id = id
             };
 
             var adapter = _mapper.Map<AuthenticationTokenRequestAdapter>(tokenDTO);
