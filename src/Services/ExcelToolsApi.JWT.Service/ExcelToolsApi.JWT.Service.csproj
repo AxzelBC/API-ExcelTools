@@ -7,12 +7,15 @@
   <ItemGroup>
     <Folder Include="Contract\" />
     <Folder Include="Extension\" />
-    <Folder Include="Feature\" />
-    <Folder Include="Feature\Commands\" />
-    <Folder Include="Feature\Queries\" />
     <Folder Include="Helper\" />
     <Folder Include="Implementation\" />
     <Folder Include="Mapping\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
   </ItemGroup>
 
   <PropertyGroup>
