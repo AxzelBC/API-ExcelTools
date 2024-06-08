@@ -1,14 +1,21 @@
 ﻿using ExcelToolsApi.Domain.Model;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExcelToolsApi.Persistence.Identity;
 
-public class ApiIdentityDbContext : DbContext
+public class ApiIdentityDbContext : IdentityDbContext
+
 {
     public DbSet<TaskModel> Task { get; set; }
 
     //public string DbPath { get; }
     private readonly string Connection;
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+    }
 
     public ApiIdentityDbContext()
     {

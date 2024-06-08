@@ -1,4 +1,11 @@
 using ExcelToolsApi.Infraestructure.Extensions;
+using ExcelToolsApi.JWT.Service;
+using ExcelToolsApi.Infraestructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using ExcelToolsApi.Persistence.Identity;
 using ExcelToolsApi.PersistenceExcel.Excel;
 
@@ -11,6 +18,29 @@ builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 //builder.Services.AddHealthChecksUI().AddInMemoryStorage();
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Services dependecy inyection
+builder.Services
+.AddJWTService()
+.AddInfrastructure(builder.Configuration)
+.AddPersistence();
+
+// auth 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+       .AddEntityFrameworkStores<ApiIdentityDbContext>()
+       .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes("super-secret-key-with-all-powers")),
+    ClockSkew = TimeSpan.Zero
+});
+
 // CORS
 var MyAnyOriginCors = "_Any";
 builder.Services.AddCors(options =>
@@ -28,6 +58,35 @@ builder.Services.AddSingleton<ApiExcelDbContext>();
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 //Swagger
+builder.Services.AddSwaggerGen(
+    c =>
+    {
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
+            }
+        });
+    }
+);
+
 builder.Services.AddSwaggerOpenAPI(builder.Configuration);
 
 var app = builder.Build();
